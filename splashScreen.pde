@@ -1,11 +1,9 @@
 
 //
-//
+// Needs docs.
 //
 
 class SplashScreen extends Scene {
-    
-    float accumTime;
     
     SplashScreen()
     {
@@ -14,19 +12,7 @@ class SplashScreen extends Scene {
     
     void init()
     {
-        this.accumTime = 0.0f;
-    }
-    
-    void tick(float dt)
-    {
-        this.accumTime += dt;
-        if (this.accumTime > 3.0f)
-            _engine.setScene("null");
-    }
-    
-    void draw()
-    {
-        background(255, 0, 0);
+        _engine.setScene("main menu");
     }
     
 }

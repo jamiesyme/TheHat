@@ -1,4 +1,9 @@
 
+//
+// The base class where everything happens. Entry point of the game.
+// 
+// Needs docs.
+//
 
 class Engine {
     
@@ -12,15 +17,19 @@ class Engine {
         this.wWidth = width;
         this.wHeight = height;
         this.sceneMgr = new SceneManager();
-        
-        this.addScreen(new SplashScreen());
-        this.setScreen("splash screen");
+    }
+    
+    void init()
+    {
+        this.addScene(new SplashScreen());
+        this.addScene(new MainMenu());
+        this.addScene(new Gameplay());
+        this.setScene("splash screen");
     }
     
     void draw()
     {
-        background(255);
-        
+        // Draw the current scene
         Scene s = this.sceneMgr.get();
         if (s != null) {
             s.draw();
@@ -29,17 +38,24 @@ class Engine {
     
     void tick()
     {
+        // Calculate the delta time
         int curTime = millis();
-        int delTime = curTime - lastTime;
+        int deltaTime = curTime - lastTime;
         lastTime = curTime;
         
+        // Max out the delta time at 0.5 seconds
+        if (deltaTime > 500) {
+            deltaTime = 500;
+        }
+            
+        // Tick the scene
         Scene s = this.sceneMgr.get();
         if (s != null) {
-            s.tick((float)delTime / 1000.0f);
+            s.tick((float)deltaTime / 1000.0f);
         }
     }
     
-    void addSceen(Scene s)
+    void addScene(Scene s)
     {
         this.sceneMgr.add(s);
     }
