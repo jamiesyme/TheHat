@@ -13,28 +13,28 @@
 //
 
 class Scene {
-    
-    String name;
-    
-    Scene(String name)
-    {
-        this.name = name;
-    }
-    
-    void init()
-    {
-    }
-    
-    void deinit()
-    {
-    }
-    
-    void tick(float dt)
-    {
-    }
-    
-    void draw()
-    {
-    }
-    
+	
+	String name;
+	
+	Scene(String name)
+	{
+		this.name = name;
+	}
+	
+	void init()
+	{
+	}
+	
+	void deinit()
+	{
+	}
+	
+	void tick(float dt)
+	{
+	}
+	
+	void draw()
+	{
+	}
+	
 }

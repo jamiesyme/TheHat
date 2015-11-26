@@ -4,15 +4,15 @@
 //
 
 class MainMenu extends Scene {
-    
-    MainMenu()
-    {
-        super("main menu");
-    }
-    
-    void init()
-    {
-        _engine.setScene("gameplay");
-    }
-    
+	
+	MainMenu()
+	{
+		super("main menu");
+	}
+	
+	void init()
+	{
+		_engine.setScene("gameplay");
+	}
+	
 }
