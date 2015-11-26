@@ -11,12 +11,14 @@ class Engine {
 	int wHeight;
 	int lastTime;
 	SceneManager sceneMgr;
+	KeyboardManager keyboardMgr;
 	
 	Engine(int width, int height)
 	{
 		this.wWidth = width;
 		this.wHeight = height;
 		this.sceneMgr = new SceneManager(this);
+		this.keyboardMgr = new KeyboardManager();
 	}
 	
 	void init()
@@ -64,4 +66,21 @@ class Engine {
 	{
 		this.sceneMgr.set(sceneName);
 	}
+	
+	void onKeyDown(char key)
+	{
+		this.keyboardMgr.onKeyDown(key);
+	}
+	
+	void onKeyUp(char key)
+	{
+		this.keyboardMgr.onKeyUp(key);
+	}
+	
+	boolean isKeyDown(char key)
+	{
+		return this.keyboardMgr.isKeyDown(key);
+	}
+	
+	
 }

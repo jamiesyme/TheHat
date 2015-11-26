@@ -16,3 +16,15 @@ void draw()
 	_engine.tick();
 	_engine.draw();
 }
+
+
+void keyPressed()
+{
+	_engine.onKeyDown(key);
+}
+
+
+void keyReleased()
+{
+	_engine.onKeyUp(key);
+}
