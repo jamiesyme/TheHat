@@ -9,6 +9,9 @@ class Player extends SceneEntity {
 	float y;
 	float w;
 	float h;
+	float vx;
+	float maxVel;
+	float accelTime;
 	
 	void init()
 	{
@@ -16,19 +19,49 @@ class Player extends SceneEntity {
 		this.h = 1.5;
 		this.x = 1.0 + w / 2.0;
 		this.y = h / 2.0;
+		this.vx = 0.0;
+		this.maxVel = 7.0;
+		this.accelTime = 0.1;
 	}
 	
 	void tick(float dt)
 	{
-		float mx = 0.0;
+		// Generate the acceleration based on player input
+		float ax = 0.0;
 		if (this.engine.isKeyDown('A') || this.engine.isKeyDown(LEFT)) {
-			mx -= 1.0;
+			ax -= 1.0;
 		}
 		if (this.engine.isKeyDown('D') || this.engine.isKeyDown(RIGHT)) {
-			mx += 1.0;
+			ax += 1.0;
 		}
 		
-		this.x += mx * 8 * dt;
+		// Adjust the acceleration based on acceleration time
+		float accelConst = this.maxVel / this.accelTime;
+		ax *= accelConst * 2.0;
+		
+		// Increase the acceleration if opposing the current velocity
+		if (ax < 0.0 && this.vx > 0.0 ||
+		    ax > 0.0 && this.vx < 0.0) {
+	    	ax *= 1.5;
+	    }
+		
+		// If the player released all controls, stop them
+		if (ax == 0.0) {
+			float vDir = (this.vx < 0.0 ? -1.0 : 1.0);
+			ax = -vDir * accelConst;
+			if (abs(ax * dt) > abs(this.vx))
+				ax = -this.vx / dt;
+		}
+		
+		// Adjust the velocity based on the acceleration, and cap it
+		this.vx += ax * dt;
+		if (abs(this.vx) > this.maxVel) {
+			float vDir = (this.vx < 0.0 ? -1.0 : 1.0);
+			this.vx = vDir * this.maxVel;
+		}
+		
+		// Move the position
+		this.x += this.vx * dt;
 	}
 	
 	void draw(Gameplay gp)
