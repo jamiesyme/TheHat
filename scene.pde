@@ -15,6 +15,7 @@
 class Scene {
 	
 	String name;
+	Engine engine;
 	
 	Scene(String name)
 	{

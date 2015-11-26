@@ -5,11 +5,13 @@
 
 class SceneManager {
 	
+	Engine engine;
 	Scene currentScene;
 	ArrayList<Scene> allScenes;
 	
-	SceneManager()
+	SceneManager(Engine engine)
 	{
+		this.engine = engine;
 		this.allScenes = new ArrayList<Scene>();
 		this.currentScene = null;
 	}
@@ -17,6 +19,7 @@ class SceneManager {
 	void add(Scene scene)
 	{
 		if (scene != null) {
+			scene.engine = this.engine;
 			this.allScenes.add(scene);
 		}
 	}

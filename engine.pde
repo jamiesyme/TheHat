@@ -16,7 +16,7 @@ class Engine {
 	{
 		this.wWidth = width;
 		this.wHeight = height;
-		this.sceneMgr = new SceneManager();
+		this.sceneMgr = new SceneManager(this);
 	}
 	
 	void init()
