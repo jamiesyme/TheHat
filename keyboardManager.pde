@@ -5,25 +5,27 @@
 
 class KeyboardManager {
 	
-	boolean[] keysDown;
+	HashMap<Integer, Boolean> keysDown;
 	
 	KeyboardManager()
 	{
-		this.keysDown = new boolean[256];
+		this.keysDown = new HashMap<Integer, Boolean>();
 	}
 	
-	void onKeyDown(char key)
+	void onKeyDown(int key)
 	{
-		this.keysDown[int(key)] = true;
+		this.keysDown.put(key, true);
 	}
 	
-	void onKeyUp(char key)
+	void onKeyUp(int key)
 	{
-		this.keysDown[int(key)] = false;
+		this.keysDown.put(key, false);
 	}
 	
-	boolean isKeyDown(char key)
+	boolean isKeyDown(int key)
 	{
-		return this.keysDown[int(key)];
+		if (!this.keysDown.containsKey(key))
+			return false;
+		return this.keysDown.get(key);
 	}
 }

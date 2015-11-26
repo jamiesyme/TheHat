@@ -16,8 +16,8 @@ class Gameplay extends Scene {
 	
 	void init()
 	{
-		this.orthoW = (float)this.engine.wWidth / 100.0;
-		this.orthoH = (float)this.engine.wHeight / 100.0;
+		this.orthoW = (float)this.engine.wWidth / 75.0;
+		this.orthoH = (float)this.engine.wHeight / 75.0;
 		this.player = new Player();
 		this.player.engine = this.engine;
 		this.player.scene = this;

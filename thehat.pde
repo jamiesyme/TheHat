@@ -20,11 +20,11 @@ void draw()
 
 void keyPressed()
 {
-	_engine.onKeyDown(key);
+	_engine.onKeyDown(keyCode);
 }
 
 
 void keyReleased()
 {
-	_engine.onKeyUp(key);
+	_engine.onKeyUp(keyCode);
 }

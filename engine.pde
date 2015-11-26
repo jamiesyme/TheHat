@@ -67,20 +67,19 @@ class Engine {
 		this.sceneMgr.set(sceneName);
 	}
 	
-	void onKeyDown(char key)
+	void onKeyDown(int key)
 	{
 		this.keyboardMgr.onKeyDown(key);
 	}
 	
-	void onKeyUp(char key)
+	void onKeyUp(int key)
 	{
 		this.keyboardMgr.onKeyUp(key);
 	}
 	
-	boolean isKeyDown(char key)
+	boolean isKeyDown(int key)
 	{
+		
 		return this.keyboardMgr.isKeyDown(key);
 	}
-	
-	
 }
