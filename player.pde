@@ -5,27 +5,36 @@
 
 class Player extends SceneEntity {
 	
-	float x;
-	float y;
-	float w;
-	float h;
+	Rect rect;
 	float vx;
-	float maxVel;
-	float accelTime;
+	float vy;
+	float maxVx;
+	float maxVy;
+	float accelTimeVx;
+	float accelVy;
+	float accelVyGravity;
+	float airVxDamp;
+	float jumpVy;
+	boolean isGrounded;
 	
 	void init()
 	{
-		this.w = 0.7;
-		this.h = 1.5;
-		this.x = 1.0 + w / 2.0;
-		this.y = h / 2.0;
+		this.rect = new Rect(1.0, 5.0, 0.7, 1.5);
 		this.vx = 0.0;
-		this.maxVel = 7.0;
-		this.accelTime = 0.1;
+		this.vy = 0.0;
+		this.maxVx = 7.0;
+		this.maxVy = 40.0;
+		this.accelTimeVx = 0.1;
+		this.accelVyGravity = -28.0;
+		this.airVxDamp = 0.1;
+		this.jumpVy = 14.0;
+		this.isGrounded = false;
 	}
 	
 	void tick(float dt)
 	{
+		Gameplay gp = (Gameplay)this.scene;
+		
 		// Generate the acceleration based on player input
 		float ax = 0.0;
 		if (this.engine.isKeyDown('A') || this.engine.isKeyDown(LEFT)) {
@@ -36,7 +45,7 @@ class Player extends SceneEntity {
 		}
 		
 		// Adjust the acceleration based on acceleration time
-		float accelConst = this.maxVel / this.accelTime;
+		float accelConst = this.maxVx / this.accelTimeVx;
 		ax *= accelConst * 2.0;
 		
 		// Increase the acceleration if opposing the current velocity
@@ -53,21 +62,54 @@ class Player extends SceneEntity {
 				ax = -this.vx / dt;
 		}
 		
-		// Adjust the velocity based on the acceleration, and cap it
-		this.vx += ax * dt;
-		if (abs(this.vx) > this.maxVel) {
-			float vDir = (this.vx < 0.0 ? -1.0 : 1.0);
-			this.vx = vDir * this.maxVel;
+		// Reduce control in the air
+		if (!this.isGrounded) {
+			ax *= this.airVxDamp;
 		}
 		
+		
+		// Apply acceleration to velocity
+		this.vx += ax * dt;
+		this.vy += this.accelVyGravity * dt;
+		
+		// Cap the velocity
+		if (abs(this.vx) > this.maxVx) {
+			float vDir = (this.vx < 0.0 ? -1.0 : 1.0);
+			this.vx = vDir * this.maxVx;
+		}
+		if (abs(this.vy) > this.maxVy) {
+			float vDir = (this.vy < 0.0 ? -1.0 : 1.0);
+			this.vy = vDir * this.maxVy;	
+		}
+		
+		
 		// Move the position
-		this.x += this.vx * dt;
+		this.rect.x += this.vx * dt;
+		this.rect.y += this.vy * dt;
+		
+		
+		// Check if we're grounded
+		Rect ground = gp.collisionMgr.findCollision(this.rect, "floor");
+		if (ground != null) {
+			this.rect.y = ground.y + ground.h;
+			if (this.vy < 0.0)
+				this.vy = 0.0;
+			
+			if (this.engine.isKeyDown(' ') || this.engine.isKeyDown(UP)) {
+				this.vy += this.jumpVy;
+			}
+			
+			this.isGrounded = true;
+		} else {
+			this.isGrounded = false;	
+		}
 	}
 	
-	void draw(Gameplay gp)
+	void draw()
 	{
+		Gameplay gp = (Gameplay)this.scene;
 		gp.drawColor(0, 0, 0);
-		gp.drawRect(this.x, this.y, this.w, this.h);
+		gp.drawRect(this.rect.x, this.rect.y, this.rect.w, this.rect.h);
 	}
 	
 }
