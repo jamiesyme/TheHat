@@ -28,7 +28,7 @@ class SceneryTrees extends SceneEntity {
 			r.h = 4.0;
 			
 			gp.drawColor(230, 230, 230);
-			gp.drawRect(r.x, r.y, r.w, r.h);
+			gp.drawRect(r);
 		}
 	}	
 }

@@ -10,6 +10,7 @@ class Gameplay extends Scene {
 	Player player;
 	PlayerCamera playerCam;
 	SceneryTrees trees;
+	Walker walker;
 	
 	Gameplay()
 	{
@@ -37,6 +38,10 @@ class Gameplay extends Scene {
 		this.playerCam.engine = this.engine;
 		this.playerCam.scene = this;
 		this.playerCam.init();
+		this.walker = new Walker(8.0);
+		this.walker.engine = this.engine;
+		this.walker.scene = this;
+		this.walker.init();
 	}
 	
 	void deinit()
@@ -51,6 +56,7 @@ class Gameplay extends Scene {
 		this.trees.tick(dt);
 		this.player.tick(dt);
 		this.playerCam.tick(dt);
+		this.walker.tick(dt);
 	}
 	
 	void draw()
@@ -62,12 +68,18 @@ class Gameplay extends Scene {
 		drawRect(0, 0, 10000, 1);
 		
 		this.trees.draw();
+		this.walker.draw();
 		this.player.draw();
 	}
 	
 	void drawColor(int r, int g, int b)
 	{
 		fill(r, g, b);
+	}
+	
+	void drawColor(color col)
+	{
+		fill(col);
 	}
 	
 	void drawRect(float x, float y, float w, float h)
@@ -84,5 +96,10 @@ class Gameplay extends Scene {
 		py = wHeight - 1 - (py + ph);
 		
 		rect(px, py, pw, ph);
+	}
+	
+	void drawRect(Rect rect)
+	{
+		drawRect(rect.x, rect.y, rect.w, rect.h);
 	}
 }

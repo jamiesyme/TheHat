@@ -28,8 +28,8 @@ class PlayerCamera extends SceneEntity {
 		if (p.rect.x < gp.ortho.x + this.bufferX) {
 			gp.ortho.x = p.rect.x - this.bufferX;
 		}
-		if (p.rect.x + p.rect.w > gp.ortho.x + gp.ortho.w - this.bufferX) {
-			gp.ortho.x = p.rect.x + p.rect.w + this.bufferX - gp.ortho.w;
+		if (p.rect.x + p.rect.w > gp.ortho.x + gp.ortho.w / 2) {
+			gp.ortho.x = p.rect.x + p.rect.w - gp.ortho.w / 2;
 		}
 		
 		if (p.rect.y < gp.ortho.y + this.bufferY) {

@@ -109,7 +109,7 @@ class Player extends SceneEntity {
 	{
 		Gameplay gp = (Gameplay)this.scene;
 		gp.drawColor(0, 0, 0);
-		gp.drawRect(this.rect.x, this.rect.y, this.rect.w, this.rect.h);
+		gp.drawRect(this.rect);
 	}
 	
 }
