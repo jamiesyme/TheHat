@@ -12,7 +12,7 @@ class MainMenu extends Scene {
 	
 	void init()
 	{
-		_engine.setScene("gameplay");
+		this.engine.setScene("gameplay");
 	}
 	
 }

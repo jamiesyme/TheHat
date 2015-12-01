@@ -12,7 +12,7 @@ class SplashScreen extends Scene {
 	
 	void init()
 	{
-		_engine.setScene("main menu");
+		this.engine.setScene("main menu");
 	}
 	
 }
