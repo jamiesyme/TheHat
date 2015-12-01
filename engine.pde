@@ -11,6 +11,7 @@ class Engine {
 	int wHeight;
 	int lastTime;
 	SceneManager sceneMgr;
+	MouseManager mouseMgr;
 	KeyboardManager keyboardMgr;
 	
 	Engine(int width, int height)
@@ -18,6 +19,7 @@ class Engine {
 		this.wWidth = width;
 		this.wHeight = height;
 		this.sceneMgr = new SceneManager(this);
+		this.mouseMgr = new MouseManager();
 		this.keyboardMgr = new KeyboardManager();
 	}
 	
@@ -49,12 +51,17 @@ class Engine {
 		if (deltaTime > 500) {
 			deltaTime = 500;
 		}
-			
+		
+		
 		// Tick the scene
 		Scene s = this.sceneMgr.get();
 		if (s != null) {
 			s.tick((float)deltaTime / 1000.0f);
 		}
+		
+		
+		// Reset the active mouse data
+		this.mouseMgr.tick();
 	}
 	
 	void addScene(Scene s)
@@ -81,5 +88,50 @@ class Engine {
 	{
 		
 		return this.keyboardMgr.isKeyDown(key);
+	}
+	
+	void onButtonDown(int button)
+	{
+		this.mouseMgr.onButtonDown(button);
+	}
+	
+	void onButtonUp(int button)
+	{
+		this.mouseMgr.onButtonUp(button);
+	}
+	
+	void onMouseMove(int x, int y)
+	{
+		this.mouseMgr.onMouseMove(x, y);
+	}
+	
+	boolean isButtonDown(int button)
+	{
+		return this.mouseMgr.isButtonDown(button);
+	}
+	
+	boolean isButtonPressed(int button)
+	{
+		return this.mouseMgr.isButtonPressed(button);
+	}
+	
+	boolean isButtonReleased(int button)
+	{
+		return this.mouseMgr.isButtonReleased(button);
+	}
+	
+	int[] getMouseCoords()
+	{
+		return this.mouseMgr.getCoords();
+	}
+	
+	int[] getOldMouseCoords()
+	{
+		return this.mouseMgr.getOldCoords();
+	}
+	
+	int[] getMouseDeltas()
+	{
+		return this.mouseMgr.getDeltas();
 	}
 }

@@ -28,3 +28,18 @@ void keyReleased()
 {
 	_engine.onKeyUp(keyCode);
 }
+
+void mousePressed()
+{
+	_engine.onButtonDown(mouseButton);
+}
+
+void mouseReleased()
+{
+	_engine.onButtonUp(mouseButton);
+}
+
+void mouseMoved()
+{
+	_engine.onMouseMove(mouseX, mouseY);
+}
