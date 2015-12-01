@@ -8,6 +8,7 @@ class Player extends SceneEntity {
 	Rect rect;
 	float vx;
 	float vy;
+	float targetVx;
 	float maxVx;
 	float maxVy;
 	float accelTimeVx;
@@ -18,6 +19,8 @@ class Player extends SceneEntity {
 	float minPushVx;
 	float walkerPressure;
 	float walkerRelief;
+	float carHitVx;
+	float carHitVy;
 	boolean isGrounded;
 	
 	void init()
@@ -25,7 +28,8 @@ class Player extends SceneEntity {
 		this.rect = new Rect(1.0, 5.0, 0.7, 1.5);
 		this.vx = 0.0;
 		this.vy = 0.0;
-		this.maxVx = 7.0;
+		this.targetVx = 10.0;
+		this.maxVx = 40.0;
 		this.maxVy = 40.0;
 		this.accelTimeVx = 0.1;
 		this.accelVyGravity = -28.0;
@@ -34,6 +38,8 @@ class Player extends SceneEntity {
 		this.minPushVx = 0.5;
 		this.walkerPressure = 0.0;
 		this.walkerRelief = 0.1;
+		this.carHitVx = -15.0;
+		this.carHitVy = 10.0;
 		this.isGrounded = false;
 	}
 	
@@ -51,7 +57,7 @@ class Player extends SceneEntity {
 		}
 		
 		// Adjust the acceleration based on acceleration time
-		float accelConst = this.maxVx / this.accelTimeVx;
+		float accelConst = this.targetVx / this.accelTimeVx;
 		ax *= accelConst * 2.0;
 		
 		// Increase the acceleration if opposing the current velocity
@@ -59,6 +65,24 @@ class Player extends SceneEntity {
 		    ax > 0.0 && this.vx < 0.0) {
 	    	ax *= 1.5;
 	    }
+	    
+	    // Clamp the acceleration to the target speed
+	    if (abs(this.vx + ax * dt) > abs(this.targetVx)) {
+	    	float vxSign = (this.vx < 0.0 ? -1.0 : 1.0);
+	    	float axSign = (ax      < 0.0 ? -1.0 : 1.0);
+	    	if (vxSign == axSign) {
+	    		ax = 0.0;
+	    	} 
+	    }
+	    
+	    
+	    // Dampen the movement from walker pressure
+	    float walkerDamp = 1 + log(1 + this.walkerPressure);
+	    ax /= walkerDamp;
+	    
+	    // Reduce the walker pressure
+		this.walkerPressure *= (1.0 - this.walkerRelief);
+		
 		
 		// If the player released all controls, stop them
 		if (ax == 0.0) {
@@ -90,33 +114,33 @@ class Player extends SceneEntity {
 		
 		
 		// Move the position
-		float moveDamp = 1 + log(1 + this.walkerPressure);
-		this.rect.x += this.vx * dt / moveDamp;
-		this.rect.y += this.vy * dt / moveDamp;
-		
-		
-		// Reduce the walker pressure
-		this.walkerPressure *= (1.0 - this.walkerRelief);
-		//if (this.walkerPressure < 0.0)
-		//	this.walkerPressure = 0.0;
+		this.rect.x += this.vx * dt;
+		this.rect.y += this.vy * dt;
 		
 		
 		// Check if we're grounded
-		CollisionEntity ground = gp.collisionMgr.findCollision(this.rect, "floor");
-		if (ground != null) {
+		this.isGrounded = false;
+		CollisionEntity[] floors = gp.collisionMgr.findCollisions(this.rect, "floor");
+		for (CollisionEntity ground : floors) {
+			if (this.rect.y > ground.rect.y + ground.rect.h)
+				continue;
+			
+			this.isGrounded = true;
 			this.rect.y = ground.rect.y + ground.rect.h;
-			if (this.vy < 0.0)
+			if (this.vy < 0.0) {
 				this.vy = 0.0;
+			}
+		}
+		
+		
+		// JUMP JUMP JUMP
+		if (this.isGrounded) {
 			
 			if (this.engine.isKeyDown(' ') || this.engine.isKeyDown(UP)) {
 				this.vy += this.jumpVy;
 			}
 			
-			this.isGrounded = true;
-		} else {
-			this.isGrounded = false;	
 		}
-		
 		
 
 		// Check if we're stomping on a walker
@@ -157,19 +181,24 @@ class Player extends SceneEntity {
 				
 				if (norm[0] != 0) {
 					
-					
-					//this.rect.y = walker.rect.y + walker.rect.h;
-					//this.vy = this.jumpVy * 0.75;
-					
 					this.walkerPressure += 1;
 					
 					((Walker)walker.data).killHorizontal( this.vx );
 					
-					//stompedWalker = true;
-					
 				}
 				
 			}
+		}
+		
+		
+		// Check if hit by car
+		CollisionEntity car = gp.collisionMgr.findCollision(this.rect, "car");
+		if (car != null) {
+			
+			this.vx = this.carHitVx;
+			this.vy = this.carHitVy;
+			this.walkerPressure = 10.0;
+			
 		}
 	}
 	

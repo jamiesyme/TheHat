@@ -8,6 +8,9 @@ class Car extends SceneEntity {
 	Rect frontRect;
 	Rect midRect;
 	Rect backRect;
+	CollisionEntity frontBody;
+	CollisionEntity midBody;
+	CollisionEntity backBody;
 	color col;
 	
 	Car(float x)
@@ -32,6 +35,22 @@ class Car extends SceneEntity {
 		this.backRect.w = 1.0;
 		this.backRect.h = 1.0;
 		this.col = color(random(40) + 110, random(40) + 110, random(40) + 110);
+		
+		this.frontBody = new CollisionEntity(this.frontRect, "car",   this);
+		this.midBody   = new CollisionEntity(this.midRect,   "floor", this);
+		this.backBody  = new CollisionEntity(this.backRect,  "floor", this);
+		Gameplay gp = (Gameplay)this.scene;
+		gp.collisionMgr.add(this.frontBody);
+		gp.collisionMgr.add(this.midBody);
+		gp.collisionMgr.add(this.backBody);
+	}
+	
+	void deinit()
+	{
+		Gameplay gp = (Gameplay)this.scene;
+		gp.collisionMgr.remove(this.frontBody);
+		gp.collisionMgr.remove(this.midBody);
+		gp.collisionMgr.remove(this.backBody);
 	}
 	
 	void tick(float dt)
