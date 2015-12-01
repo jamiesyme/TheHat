@@ -17,7 +17,7 @@ class PlayerCamera extends SceneEntity {
 	void init()
 	{
 		this.bufferX = 1.0;
-		this.bufferY = 0.1;
+		this.bufferY = 1.0;
 	}
 	
 	void tick(float dt)
@@ -33,7 +33,7 @@ class PlayerCamera extends SceneEntity {
 		}
 		
 		if (p.rect.y < gp.ortho.y + this.bufferY) {
-			gp.ortho.y = p.rect.y - this.bufferY;	
+			gp.ortho.y = p.rect.y - this.bufferY;
 		}
 		if (p.rect.y + p.rect.h > gp.ortho.y + gp.ortho.h - this.bufferY) {
 			gp.ortho.y = p.rect.y + p.rect.h + this.bufferY - gp.ortho.h;

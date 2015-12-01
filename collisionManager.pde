@@ -2,45 +2,82 @@
 
 class CollisionManager {
 	
-	ArrayList<Rect> rects;
-	ArrayList<String> types;
+	ArrayList<CollisionEntity> entities;
 	
 	CollisionManager()
 	{
-		this.rects = new ArrayList<Rect>();
-		this.types = new ArrayList<String>();
+		this.entities = new ArrayList<CollisionEntity>();
 	}
 	
-	void add(Rect rect, String type)
+	void add(CollisionEntity e)
 	{
-		this.rects.add(rect);
-		this.types.add(type);
+		this.entities.add(e);
 	}
 	
-	void remove(Rect rect)
+	void remove(CollisionEntity e)
 	{
-		for (int i = 0; i < this.rects.size(); i++) {
-			if (this.rects.get(i) == rect) {
-				this.rects.remove(i);
-				this.types.remove(i);
-				break;	
+		for (int i = 0; i < this.entities.size(); i++) {
+			if (this.entities.get(i) == e) {
+				this.entities.remove(i);
+				break;
 			}
 		}
 	}
 	
-	Rect findCollision(Rect rect, String type)
+	CollisionEntity findCollision(Rect rect, String type)
 	{
-		for (Rect rect2 : this.rects) {
+		for (CollisionEntity e : this.entities) {
 			
-			if (rect.x + rect.w < rect2.x) continue;
-			if (rect.y + rect.h < rect2.y) continue;
-			if (rect.x > rect2.x + rect2.w) continue;
-			if (rect.y > rect2.y + rect2.h) continue;
+			if (!e.type.equals(type))
+				continue;
 			
-			return rect2;
+			if (!isCollision(rect, e.rect))
+				continue;
+			
+			return e;
 		}
 		
 		return null;
 	}
-		
+	
+	boolean isCollision(Rect r1, Rect r2)
+	{
+		if (r1.x + r1.w < r2.x) return false;
+		if (r1.y + r1.h < r2.y) return false;
+		if (r1.x > r2.x + r2.w) return false;
+		if (r1.y > r2.y + r2.h) return false;
+		return true;
+	}
+	
+	// Assumes isCollision() has been called and is true
+	float[] getCollisionNormal(Rect r1, Rect r2)
+	{
+		float[] normal = { 0, 0 };
+		if (r1.x + r1.w / 2 < r2.x + r2.w / 2) {		// If r1x < r2x
+			if (r1.y + r1.h / 2 < r2.y + r2.h / 2) {	// If r1y < r2y
+				float xd = (r1.x + r1.w) - r2.x;
+				float yd = (r1.y + r1.h) - r2.y;
+				if (xd < yd) normal[0] = -1;
+				else         normal[1] = -1;
+			} else {									// If r1y > r2y
+				float xd = (r1.x + r1.w) - r2.x;
+				float yd = (r2.y + r2.h) - r1.y;
+				if (xd < yd) normal[0] = -1;
+				else         normal[1] =  1;
+			}
+		} else {										// If r1x > r2x
+			if (r1.y + r1.h / 2 < r2.y + r2.h / 2) {	// If r1y < r2y
+				float xd = (r2.x + r2.w) - r1.x;
+				float yd = (r1.y + r1.h) - r2.y;
+				if (xd < yd) normal[0] =  1;
+				else         normal[1] = -1;
+			} else {									// If r1y > r2y
+				float xd = (r2.x + r2.w) - r1.x;
+				float yd = (r2.y + r2.h) - r1.y;
+				if (xd < yd) normal[0] =  1;
+				else         normal[1] =  1;
+			}
+		}
+		return normal;
+	}
 }

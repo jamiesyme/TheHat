@@ -10,7 +10,7 @@ class Gameplay extends Scene {
 	Player player;
 	PlayerCamera playerCam;
 	SceneryTrees trees;
-	Walker walker;
+	ArrayList<Walker> walkers;
 	
 	Gameplay()
 	{
@@ -25,7 +25,7 @@ class Gameplay extends Scene {
 		this.ortho.w = (float)this.engine.wWidth / 75.0;
 		this.ortho.h = (float)this.engine.wHeight / 75.0;
 		this.collisionMgr = new CollisionManager();
-		this.collisionMgr.add(new Rect(-100, 0, 200, 1), "floor");
+		this.collisionMgr.add(new CollisionEntity(new Rect(-100, 0, 200, 1), "floor"));
 		this.trees = new SceneryTrees();
 		this.trees.engine = this.engine;
 		this.trees.scene = this;
@@ -38,10 +38,15 @@ class Gameplay extends Scene {
 		this.playerCam.engine = this.engine;
 		this.playerCam.scene = this;
 		this.playerCam.init();
-		this.walker = new Walker(8.0);
-		this.walker.engine = this.engine;
-		this.walker.scene = this;
-		this.walker.init();
+		this.walkers = new ArrayList<Walker>();
+		for (int i = 0; i < 100; i++) {
+			Walker walker = new Walker(random(-20, 60));
+			walker.engine = this.engine;
+			walker.scene = this;
+			walker.init();
+			this.walkers.add(walker);
+		}
+		
 	}
 	
 	void deinit()
@@ -56,7 +61,13 @@ class Gameplay extends Scene {
 		this.trees.tick(dt);
 		this.player.tick(dt);
 		this.playerCam.tick(dt);
-		this.walker.tick(dt);
+		for (Walker walker : this.walkers)
+			walker.tick(dt);
+		for (int i = 0; i < this.walkers.size(); i++) {
+			if (!this.walkers.get(i).isActive) {
+				this.walkers.remove(i--);
+			}
+		}
 	}
 	
 	void draw()
@@ -68,7 +79,8 @@ class Gameplay extends Scene {
 		drawRect(0, 0, 10000, 1);
 		
 		this.trees.draw();
-		this.walker.draw();
+		for (Walker walker : this.walkers)
+			walker.draw();
 		this.player.draw();
 	}
 	
@@ -77,29 +89,77 @@ class Gameplay extends Scene {
 		fill(r, g, b);
 	}
 	
+	void drawColor(int r, int g, int b, int a)
+	{
+		fill(r, g, b, a);
+	}
+	
 	void drawColor(color col)
 	{
 		fill(col);
 	}
 	
-	void drawRect(float x, float y, float w, float h)
+	void drawColor(color col, int a)
+	{
+		fill(col, a);
+	}
+	
+	int[] translateCoords(float x, float y)
 	{
 		int wWidth   = this.engine.wWidth;
 		int wHeight  = this.engine.wHeight;
 		float transX = float(wWidth)  / this.ortho.w;
 		float transY = float(wHeight) / this.ortho.h;
 		
-		int pw = int(w * transX);
-		int ph = int(h * transY);
 		int px = int(x * transX) - int(this.ortho.x * transX);
 		int py = int(y * transY) - int(this.ortho.y * transY);
-		py = wHeight - 1 - (py + ph);
+		py = wHeight - 1 - py;
 		
-		rect(px, py, pw, ph);
+		int[] arr = { px, py };
+		return arr;
+	}
+	
+	int[] translateDimensions(float w, float h)
+	{
+		int wWidth   = this.engine.wWidth;
+		int wHeight  = this.engine.wHeight;
+		float transX = float(wWidth)  / this.ortho.w;
+		float transY = float(wHeight) / this.ortho.h;
+		
+		int[] arr = { int(w * transX), int(h * transY) };
+		return arr;
+	}
+	
+	Rect translateRect(Rect rect)
+	{
+		int[] coords = translateCoords(rect.x, rect.y);
+		int[] dims = translateDimensions(rect.w, rect.h);
+		return new Rect(
+			(float)coords[0], 
+			(float)(coords[1] - dims[1]),
+			(float)dims[0], 
+			(float)dims[1]
+		);
+	}
+	
+	void drawRect(float x, float y, float w, float h)
+	{
+		drawRect(new Rect(x, y, w, h));
 	}
 	
 	void drawRect(Rect rect)
 	{
-		drawRect(rect.x, rect.y, rect.w, rect.h);
+		rect = translateRect(rect);
+		rect(rect.x, rect.y, rect.w, rect.h);
+	}
+	
+	void drawRect(Rect rect, float rot)
+	{
+		rect = translateRect(rect);
+		pushMatrix();
+		translate(rect.x, rect.y);
+		rotate( radians(rot) );
+		rect(0, 0, rect.w, rect.h);
+		popMatrix();
 	}
 }

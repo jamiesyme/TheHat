@@ -89,9 +89,9 @@ class Player extends SceneEntity {
 		
 		
 		// Check if we're grounded
-		Rect ground = gp.collisionMgr.findCollision(this.rect, "floor");
+		CollisionEntity ground = gp.collisionMgr.findCollision(this.rect, "floor");
 		if (ground != null) {
-			this.rect.y = ground.y + ground.h;
+			this.rect.y = ground.rect.y + ground.rect.h;
 			if (this.vy < 0.0)
 				this.vy = 0.0;
 			
@@ -102,6 +102,31 @@ class Player extends SceneEntity {
 			this.isGrounded = true;
 		} else {
 			this.isGrounded = false;	
+		}
+		
+		
+		// Check if we're stomping on a walker
+		if (!this.isGrounded) {
+			
+			CollisionEntity walker = gp.collisionMgr.findCollision(this.rect, "walker");
+			if (walker != null) {
+				
+				if ( gp.collisionMgr.isCollision(this.rect, walker.rect) ) {
+					
+					float[] norm = gp.collisionMgr.getCollisionNormal(this.rect, walker.rect);
+					
+					if (this.vy < 0.0 && norm[1] > 0) {
+						
+						this.rect.y = walker.rect.y + walker.rect.h;
+						this.vy = this.jumpVy * 0.75;
+						
+						((Walker)walker.data).killDown( this.vx );
+						
+					}
+					
+				}
+			}
+			
 		}
 	}
 	
