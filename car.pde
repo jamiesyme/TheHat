@@ -12,6 +12,7 @@ class Car extends SceneEntity {
 	CollisionEntity midBody;
 	CollisionEntity backBody;
 	color col;
+	float vx;
 	
 	Car(float x)
 	{
@@ -35,6 +36,7 @@ class Car extends SceneEntity {
 		this.backRect.w = 1.0;
 		this.backRect.h = 1.0;
 		this.col = color(random(40) + 110, random(40) + 110, random(40) + 110);
+		this.vx = -20.0;
 		
 		this.frontBody = new CollisionEntity(this.frontRect, "car",   this);
 		this.midBody   = new CollisionEntity(this.midRect,   "floor", this);
@@ -55,7 +57,20 @@ class Car extends SceneEntity {
 	
 	void tick(float dt)
 	{
+		// Move the car
+		float moveX = this.vx * dt;
+		this.frontRect.x += moveX;
+		this.midRect.x   += moveX;
+		this.backRect.x  += moveX;
 		
+		// Check if hit a walker
+		Gameplay gp = (Gameplay)this.scene;
+		CollisionEntity[] walkers = gp.collisionMgr.findCollisions(this.frontRect, "walker");
+		for (CollisionEntity walker : walkers) {
+			
+			((Walker)walker.data).killUp( -this.vx );
+			
+		}
 	}
 	
 	void draw()
@@ -66,5 +81,5 @@ class Car extends SceneEntity {
 		gp.drawRect(this.midRect);
 		gp.drawRect(this.backRect);
 	}
-		
+	
 }

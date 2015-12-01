@@ -10,7 +10,7 @@ class Gameplay extends Scene {
 	Player player;
 	PlayerCamera playerCam;
 	SceneryTrees trees;
-	//ArrayList<Walker> walkers;
+	ArrayList<Walker> walkers;
 	ArrayList<Car> cars;
 	
 	Gameplay()
@@ -39,17 +39,17 @@ class Gameplay extends Scene {
 		this.playerCam.engine = this.engine;
 		this.playerCam.scene = this;
 		this.playerCam.init();
-		//this.walkers = new ArrayList<Walker>();
-		//for (int i = 0; i < 100; i++) {
-		//	Walker walker = new Walker(random(-20, 60));
-		//	walker.engine = this.engine;
-		//	walker.scene = this;
-		//	walker.init();
-		//	this.walkers.add(walker);
-		//}
+		this.walkers = new ArrayList<Walker>();
+		for (int i = 0; i < 100; i++) {
+			Walker walker = new Walker(random(-20, 60));
+			walker.engine = this.engine;
+			walker.scene = this;
+			walker.init();
+			this.walkers.add(walker);
+		}
 		this.cars = new ArrayList<Car>();
 		//for (int i = 0; i < 1; i++) {
-			Car car = new Car(5);
+			Car car = new Car(100);
 			car.engine = this.engine;
 			car.scene = this;
 			car.init();
@@ -61,8 +61,8 @@ class Gameplay extends Scene {
 	{
 		for (Car car : this.cars)
 			car.deinit();
-		//for (Walker walker : this.walkers)
-		//	walker.deinit();
+		for (Walker walker : this.walkers)
+			walker.deinit();
 		this.playerCam.deinit();
 		this.player.deinit();
 		this.trees.deinit();
@@ -73,13 +73,13 @@ class Gameplay extends Scene {
 		this.trees.tick(dt);
 		this.player.tick(dt);
 		this.playerCam.tick(dt);
-		//for (Walker walker : this.walkers)
-		//	walker.tick(dt);
-		//for (int i = 0; i < this.walkers.size(); i++) {
-		//	if (!this.walkers.get(i).isActive) {
-		//		this.walkers.remove(i--);
-		//	}
-		//}
+		for (Walker walker : this.walkers)
+			walker.tick(dt);
+		for (int i = 0; i < this.walkers.size(); i++) {
+			if (!this.walkers.get(i).isActive) {
+				this.walkers.remove(i--);
+			}
+		}
 		for (Car car : this.cars)
 			car.tick(dt);
 	}
@@ -90,11 +90,11 @@ class Gameplay extends Scene {
 		noStroke();
 		
 		drawColor(50, 50, 50);
-		drawRect(0, 0, 10000, 1);
+		drawRect(-1000, 0, 10000, 1);
 		
 		this.trees.draw();
-		//for (Walker walker : this.walkers)
-		//	walker.draw();
+		for (Walker walker : this.walkers)
+			walker.draw();
 		for (Car car : this.cars)
 			car.draw();
 		this.player.draw();

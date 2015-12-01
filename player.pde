@@ -25,7 +25,7 @@ class Player extends SceneEntity {
 	
 	void init()
 	{
-		this.rect = new Rect(1.0, 5.0, 0.7, 1.5);
+		this.rect = new Rect(1.0, 1.0, 0.7, 1.5);
 		this.vx = 0.0;
 		this.vy = 0.0;
 		this.targetVx = 10.0;
