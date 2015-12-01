@@ -15,6 +15,9 @@ class Player extends SceneEntity {
 	float accelVyGravity;
 	float airVxDamp;
 	float jumpVy;
+	float minPushVx;
+	float walkerPressure;
+	float walkerRelief;
 	boolean isGrounded;
 	
 	void init()
@@ -28,6 +31,9 @@ class Player extends SceneEntity {
 		this.accelVyGravity = -28.0;
 		this.airVxDamp = 0.1;
 		this.jumpVy = 14.0;
+		this.minPushVx = 0.5;
+		this.walkerPressure = 0.0;
+		this.walkerRelief = 0.1;
 		this.isGrounded = false;
 	}
 	
@@ -84,8 +90,15 @@ class Player extends SceneEntity {
 		
 		
 		// Move the position
-		this.rect.x += this.vx * dt;
-		this.rect.y += this.vy * dt;
+		float moveDamp = 1 + log(1 + this.walkerPressure);
+		this.rect.x += this.vx * dt / moveDamp;
+		this.rect.y += this.vy * dt / moveDamp;
+		
+		
+		// Reduce the walker pressure
+		this.walkerPressure *= (1.0 - this.walkerRelief);
+		//if (this.walkerPressure < 0.0)
+		//	this.walkerPressure = 0.0;
 		
 		
 		// Check if we're grounded
@@ -105,28 +118,58 @@ class Player extends SceneEntity {
 		}
 		
 		
+
 		// Check if we're stomping on a walker
-		if (!this.isGrounded) {
+		boolean stompedWalker = false;
+		
+		if (!this.isGrounded && this.vy < 0.0) {
 			
-			CollisionEntity walker = gp.collisionMgr.findCollision(this.rect, "walker");
-			if (walker != null) {
+			CollisionEntity[] walkers = gp.collisionMgr.findCollisions(this.rect, "walker");
+			
+			for (CollisionEntity walker : walkers) {
 				
-				if ( gp.collisionMgr.isCollision(this.rect, walker.rect) ) {
+				float[] norm = gp.collisionMgr.getCollisionNormal(this.rect, walker.rect);
+				
+				if (norm[1] > 0) {
 					
-					float[] norm = gp.collisionMgr.getCollisionNormal(this.rect, walker.rect);
+					this.rect.y = walker.rect.y + walker.rect.h;
+					this.vy = this.jumpVy * 0.75;
 					
-					if (this.vy < 0.0 && norm[1] > 0) {
-						
-						this.rect.y = walker.rect.y + walker.rect.h;
-						this.vy = this.jumpVy * 0.75;
-						
-						((Walker)walker.data).killDown( this.vx );
-						
-					}
+					((Walker)walker.data).killDown( this.vx );
+					
+					stompedWalker = true;
 					
 				}
+				
 			}
 			
+		}
+		
+		
+		// Check if we just ran into a walker
+		if (abs(this.vx) >= this.minPushVx) {
+			
+			CollisionEntity[] walkers = gp.collisionMgr.findCollisions(this.rect, "walker");
+			
+			for (CollisionEntity walker : walkers) {
+					
+				float[] norm = gp.collisionMgr.getCollisionNormal(this.rect, walker.rect);
+				
+				if (norm[0] != 0) {
+					
+					
+					//this.rect.y = walker.rect.y + walker.rect.h;
+					//this.vy = this.jumpVy * 0.75;
+					
+					this.walkerPressure += 1;
+					
+					((Walker)walker.data).killHorizontal( this.vx );
+					
+					//stompedWalker = true;
+					
+				}
+				
+			}
 		}
 	}
 	

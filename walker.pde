@@ -76,4 +76,16 @@ class Walker extends SceneEntity {
 		((Gameplay)this.scene).collisionMgr.remove(this.body);
 	}
 	
+	// Will fall over in dirX direction
+	void killHorizontal(float dirX)
+	{
+		this.isDead = true;
+		if (dirX > 0) { this.vr =  45; this.vx =  1; }
+		if (dirX < 0) { this.vr = -45; this.vx = -1; }
+		this.vy = -this.rect.h / 2;
+		this.dColA = -2.0;
+		
+		((Gameplay)this.scene).collisionMgr.remove(this.body);
+	}
+	
 }

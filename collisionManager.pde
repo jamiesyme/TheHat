@@ -40,6 +40,24 @@ class CollisionManager {
 		return null;
 	}
 	
+	CollisionEntity[] findCollisions(Rect rect, String type)
+	{
+		ArrayList<CollisionEntity> hits = new ArrayList<CollisionEntity>();
+		
+		for (CollisionEntity e : this.entities) {
+			
+			if (!e.type.equals(type))
+				continue;
+			
+			if (!isCollision(rect, e.rect))
+				continue;
+			
+			hits.add(e);
+		}
+		
+		return hits.toArray( new CollisionEntity[hits.size()] );
+	}
+	
 	boolean isCollision(Rect r1, Rect r2)
 	{
 		if (r1.x + r1.w < r2.x) return false;
