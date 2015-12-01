@@ -10,7 +10,8 @@ class Gameplay extends Scene {
 	Player player;
 	PlayerCamera playerCam;
 	SceneryTrees trees;
-	ArrayList<Walker> walkers;
+	//ArrayList<Walker> walkers;
+	ArrayList<Car> cars;
 	
 	Gameplay()
 	{
@@ -38,19 +39,30 @@ class Gameplay extends Scene {
 		this.playerCam.engine = this.engine;
 		this.playerCam.scene = this;
 		this.playerCam.init();
-		this.walkers = new ArrayList<Walker>();
-		for (int i = 0; i < 100; i++) {
-			Walker walker = new Walker(random(-20, 60));
-			walker.engine = this.engine;
-			walker.scene = this;
-			walker.init();
-			this.walkers.add(walker);
-		}
-		
+		//this.walkers = new ArrayList<Walker>();
+		//for (int i = 0; i < 100; i++) {
+		//	Walker walker = new Walker(random(-20, 60));
+		//	walker.engine = this.engine;
+		//	walker.scene = this;
+		//	walker.init();
+		//	this.walkers.add(walker);
+		//}
+		this.cars = new ArrayList<Car>();
+		//for (int i = 0; i < 1; i++) {
+			Car car = new Car(5);
+			car.engine = this.engine;
+			car.scene = this;
+			car.init();
+			this.cars.add(car);
+		//}
 	}
 	
 	void deinit()
 	{
+		for (Car car : this.cars)
+			car.deinit();
+		//for (Walker walker : this.walkers)
+		//	walker.deinit();
 		this.playerCam.deinit();
 		this.player.deinit();
 		this.trees.deinit();
@@ -61,13 +73,15 @@ class Gameplay extends Scene {
 		this.trees.tick(dt);
 		this.player.tick(dt);
 		this.playerCam.tick(dt);
-		for (Walker walker : this.walkers)
-			walker.tick(dt);
-		for (int i = 0; i < this.walkers.size(); i++) {
-			if (!this.walkers.get(i).isActive) {
-				this.walkers.remove(i--);
-			}
-		}
+		//for (Walker walker : this.walkers)
+		//	walker.tick(dt);
+		//for (int i = 0; i < this.walkers.size(); i++) {
+		//	if (!this.walkers.get(i).isActive) {
+		//		this.walkers.remove(i--);
+		//	}
+		//}
+		for (Car car : this.cars)
+			car.tick(dt);
 	}
 	
 	void draw()
@@ -79,8 +93,10 @@ class Gameplay extends Scene {
 		drawRect(0, 0, 10000, 1);
 		
 		this.trees.draw();
-		for (Walker walker : this.walkers)
-			walker.draw();
+		//for (Walker walker : this.walkers)
+		//	walker.draw();
+		for (Car car : this.cars)
+			car.draw();
 		this.player.draw();
 	}
 	
@@ -111,8 +127,8 @@ class Gameplay extends Scene {
 		float transX = float(wWidth)  / this.ortho.w;
 		float transY = float(wHeight) / this.ortho.h;
 		
-		int px = int(x * transX) - int(this.ortho.x * transX);
-		int py = int(y * transY) - int(this.ortho.y * transY);
+		int px = int(round(x * transX)) - int(round(this.ortho.x * transX));
+		int py = int(round(y * transY)) - int(round(this.ortho.y * transY));
 		py = wHeight - 1 - py;
 		
 		int[] arr = { px, py };
@@ -126,7 +142,7 @@ class Gameplay extends Scene {
 		float transX = float(wWidth)  / this.ortho.w;
 		float transY = float(wHeight) / this.ortho.h;
 		
-		int[] arr = { int(w * transX), int(h * transY) };
+		int[] arr = { int(round(w * transX)), int(round(h * transY)) };
 		return arr;
 	}
 	
