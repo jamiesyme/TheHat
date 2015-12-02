@@ -27,7 +27,7 @@ class Player extends SceneEntity {
 	void init()
 	{
 		this.rect = new Rect(1.0, 1.0, 0.7, 1.5);
-		this.texture = this.engine.getImage("gale");
+		this.texture = this.engine.getImage("gale right");
 		this.vx = 0.0;
 		this.vy = 0.0;
 		this.targetVx = 10.0;
@@ -84,6 +84,14 @@ class Player extends SceneEntity {
 	    
 	    // Reduce the walker pressure
 		this.walkerPressure *= (1.0 - this.walkerRelief);
+		
+		
+		// Update the texture direction
+		PImage newTexture = null;
+		if (ax > 0.0) newTexture = this.engine.getImage("gale right");
+		if (ax < 0.0) newTexture = this.engine.getImage("gale left");
+		if (newTexture != null)
+			this.texture = newTexture;
 		
 		
 		// If the player released all controls, stop them
@@ -202,12 +210,13 @@ class Player extends SceneEntity {
 			this.walkerPressure = 10.0;
 			
 		}
+		
 	}
 	
 	void draw()
 	{
 		Gameplay gp = (Gameplay)this.scene;
-		gp.drawColor(0, 0, 0);
+		gp.drawTint(255, 255, 255);
 		gp.drawRect(this.rect, this.texture, 0.0);
 	}
 	

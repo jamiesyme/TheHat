@@ -12,15 +12,32 @@ class SplashScreen extends Scene {
 	
 	void init()
 	{
-		HashMap<String, String> images = new HashMap<String, String>();
+		add("gale right", "gale.png");
+		addFlipped("gale left", "gale.png");
 		
-		images.put("gale", "gale.png");
-		
-		for (HashMap.Entry<String, String> img : images.entrySet()) {
-			this.engine.imageMgr.load(img.getKey(), img.getValue());
-		}
+		add("boy right", "boy.png");
+		addFlipped("boy left", "boy.png");
 		
 		this.engine.setScene("main menu");
+	}
+	
+	void add(String name, String location)
+	{
+		this.engine.imageMgr.add(name, location);
+	}
+	
+	void addFlipped(String name, String location)
+	{
+		PImage img = loadImage(location);
+		PImage img2 = createImage(img.width, img.height, ARGB);
+		
+		for (int x = 0; x < img2.width; x++) {
+			for (int y = 0; y < img2.height; y++) {
+				img2.set(x, y, img.get(img.width - 1 - x, y));
+			}
+		}
+		
+		this.engine.imageMgr.add(name, img2);
 	}
 	
 }

@@ -120,6 +120,26 @@ class Gameplay extends Scene {
 		fill(col, a);
 	}
 	
+	void drawTint(int r, int g, int b)
+	{
+		tint(r, g, b);
+	}
+	
+	void drawTint(int r, int g, int b, int a)
+	{
+		tint(r, g, b, a);
+	}
+	
+	void drawTint(color col)
+	{
+		tint(col);
+	}
+	
+	void drawTint(color col, int a)
+	{
+		tint(col, a);
+	}
+	
 	int[] translateCoords(float x, float y)
 	{
 		int wWidth   = this.engine.wWidth;

@@ -6,6 +6,7 @@
 class Walker extends SceneEntity {
 	
 	Rect rect;
+	PImage texture;
 	color col;
 	float colA;
 	float dColA;
@@ -27,9 +28,9 @@ class Walker extends SceneEntity {
 	void init()
 	{
 		this.rect.y = 1.0;
-		this.rect.w = 0.6;
-		this.rect.h = 1.35;
-		this.col = color(random(40) + 110, random(40) + 110, random(40) + 110);
+		this.rect.w = 0.45;
+		this.rect.h = 1.7;
+		this.col = color(random(50) + 190, random(50) + 190, random(50) + 190);
 		this.colA = 1.0;
 		this.dColA = 0.0;
 		this.rot = 0.0;
@@ -41,6 +42,11 @@ class Walker extends SceneEntity {
 		this.vr = 0.0;
 		this.isDead = false;
 		this.isActive = true;
+		
+		if (this.vx > 0.0)
+			this.texture = this.engine.getImage("boy right");
+		else
+			this.texture = this.engine.getImage("boy left");
 		
 		this.body = new CollisionEntity(this.rect, "walker", this);
 		((Gameplay)this.scene).collisionMgr.add(this.body);
@@ -59,8 +65,8 @@ class Walker extends SceneEntity {
 	void draw()
 	{
 		Gameplay gp = (Gameplay)this.scene;
-		gp.drawColor(this.col, int(this.colA * 255));
-		gp.drawRect(this.rect, null, this.rot);
+		gp.drawTint(this.col, int(this.colA * 255));
+		gp.drawRect(this.rect, this.texture, this.rot);
 	}
 	
 	// Will rotate in dirX direction
