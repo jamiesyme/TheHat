@@ -18,6 +18,7 @@ class Player extends SceneEntity {
 	float airVxDamp;
 	float jumpVy;
 	float minPushVx;
+	float minKillVx;
 	float walkerPressure;
 	float walkerRelief;
 	float walkerDampVx;
@@ -38,7 +39,8 @@ class Player extends SceneEntity {
 		this.accelVyGravity = -28.0;
 		this.airVxDamp = 0.1;
 		this.jumpVy = 14.0;
-		this.minPushVx = 0.5;
+		this.minPushVx = this.targetVx * 0.05;
+		this.minKillVx = this.targetVx * 0.6;
 		this.walkerPressure = 0.0;
 		this.walkerRelief = 0.1;
 		this.walkerDampVx = 0.1;
@@ -181,18 +183,37 @@ class Player extends SceneEntity {
 		// Check if we just ran into a walker
 		if (abs(this.vx) >= this.minPushVx) {
 			
+			float pushDist = this.vx * dt;
+			
 			CollisionEntity[] walkers = gp.collisionMgr.findCollisions(this.rect, "walker");
 			
 			for (CollisionEntity walker : walkers) {
-					
+				
+				// Make sure we're moving towards the walker
+				if (this.vx > 0.0 && (this.rect.x - walker.rect.x) > 0.0)
+					continue;
+				if (this.vx < 0.0 && (this.rect.x - walker.rect.x) < 0.0)
+					continue;
+				
 				float[] norm = gp.collisionMgr.getCollisionNormal(this.rect, walker.rect);
 				
 				if (norm[0] != 0) {
 					
-					this.walkerPressure += 1;
-					this.vx *= this.walkerDampVx;
+					// Are we pushing them or knocking them over
+					if (abs(this.vx) >= this.minKillVx) {
+						
+						this.walkerPressure += 1;
+						this.vx *= this.walkerDampVx;
+						((Walker)walker.data).killHorizontal( this.vx );
+						
+					} else {
+						
+						walker.rect.x += pushDist;
+						this.vx *= this.walkerDampVx;
+						
+					}
 					
-					((Walker)walker.data).killHorizontal( this.vx );
+					
 					
 				}
 				
