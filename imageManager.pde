@@ -12,14 +12,17 @@ class ImageManager {
 		this.images = new HashMap<String, PImage>();
 	}
 	
-	void add(String name, String location)
+	PImage add(String name, String location)
 	{
-		this.images.put(name, loadImage(location));
+		PImage img = loadImage(location);
+		this.images.put(name, img);
+		return img;
 	}
 	
-	void add(String name, PImage image)
+	PImage add(String name, PImage image)
 	{
 		this.images.put(name, image);
+		return image;
 	}
 	
 	PImage get(String name)

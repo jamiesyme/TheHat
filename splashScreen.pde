@@ -12,6 +12,13 @@ class SplashScreen extends Scene {
 	
 	void init()
 	{
+		add("main menu bg", "mainMenu_background.png");
+		add("main menu button", "mainMenu_buttonNoHover.png");
+		add("main menu button hover", "mainMenu_buttonHover.png");
+		add("main menu play", "mainMenu_play.png");
+		add("main menu exit", "mainMenu_exit.png");
+		add("main menu title", "mainMenu_title.png");
+		
 		add("gale right", "gale.png");
 		addFlipped("gale left", "gale.png");
 		
