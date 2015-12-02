@@ -25,6 +25,9 @@ class SplashScreen extends Scene {
 		add("boy right", "boy.png");
 		addFlipped("boy left", "boy.png");
 		
+		add("car 1", "car1.png");
+		add("car 2", "car2.png");
+		
 		this.engine.setScene("main menu");
 	}
 	
