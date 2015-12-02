@@ -20,6 +20,7 @@ class Player extends SceneEntity {
 	float minPushVx;
 	float walkerPressure;
 	float walkerRelief;
+	float walkerDampVx;
 	float carHitVx;
 	float carHitVy;
 	boolean isGrounded;
@@ -40,6 +41,7 @@ class Player extends SceneEntity {
 		this.minPushVx = 0.5;
 		this.walkerPressure = 0.0;
 		this.walkerRelief = 0.1;
+		this.walkerDampVx = 0.1;
 		this.carHitVx = -15.0;
 		this.carHitVy = 10.0;
 		this.isGrounded = false;
@@ -76,14 +78,6 @@ class Player extends SceneEntity {
 	    		ax = 0.0;
 	    	} 
 	    }
-	    
-	    
-	    // Dampen the movement from walker pressure
-	    float walkerDamp = 1 + log(1 + this.walkerPressure);
-	    ax /= walkerDamp;
-	    
-	    // Reduce the walker pressure
-		this.walkerPressure *= (1.0 - this.walkerRelief);
 		
 		
 		// Update the texture direction
@@ -109,7 +103,8 @@ class Player extends SceneEntity {
 		
 		
 		// Apply acceleration to velocity
-		this.vx += ax * dt;
+		float walkerDamp = 1 + log(1 + this.walkerPressure);
+		this.vx += ax * dt / walkerDamp;
 		this.vy += this.accelVyGravity * dt;
 		
 		// Cap the velocity
@@ -121,6 +116,9 @@ class Player extends SceneEntity {
 			float vDir = (this.vy < 0.0 ? -1.0 : 1.0);
 			this.vy = vDir * this.maxVy;	
 		}
+		
+		// Reduce the walker pressure
+		this.walkerPressure *= (1.0 - this.walkerRelief);
 		
 		
 		// Move the position
@@ -192,6 +190,7 @@ class Player extends SceneEntity {
 				if (norm[0] != 0) {
 					
 					this.walkerPressure += 1;
+					this.vx *= this.walkerDampVx;
 					
 					((Walker)walker.data).killHorizontal( this.vx );
 					
@@ -207,7 +206,7 @@ class Player extends SceneEntity {
 			
 			this.vx = this.carHitVx;
 			this.vy = this.carHitVy;
-			this.walkerPressure = 10.0;
+			this.walkerPressure = 500;
 			
 		}
 		
