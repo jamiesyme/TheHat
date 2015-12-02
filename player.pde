@@ -6,6 +6,7 @@
 class Player extends SceneEntity {
 	
 	Rect rect;
+	PImage texture;
 	float vx;
 	float vy;
 	float targetVx;
@@ -26,6 +27,7 @@ class Player extends SceneEntity {
 	void init()
 	{
 		this.rect = new Rect(1.0, 1.0, 0.7, 1.5);
+		this.texture = this.engine.getImage("gale");
 		this.vx = 0.0;
 		this.vy = 0.0;
 		this.targetVx = 10.0;
@@ -206,7 +208,7 @@ class Player extends SceneEntity {
 	{
 		Gameplay gp = (Gameplay)this.scene;
 		gp.drawColor(0, 0, 0);
-		gp.drawRect(this.rect);
+		gp.drawRect(this.rect, this.texture, 0.0);
 	}
 	
 }

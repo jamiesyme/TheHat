@@ -60,7 +60,7 @@ class Walker extends SceneEntity {
 	{
 		Gameplay gp = (Gameplay)this.scene;
 		gp.drawColor(this.col, int(this.colA * 255));
-		gp.drawRect(this.rect, this.rot);
+		gp.drawRect(this.rect, null, this.rot);
 	}
 	
 	// Will rotate in dirX direction

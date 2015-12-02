@@ -165,17 +165,19 @@ class Gameplay extends Scene {
 	
 	void drawRect(Rect rect)
 	{
-		rect = translateRect(rect);
-		rect(rect.x, rect.y, rect.w, rect.h);
+		drawRect(rect, null, 0.0);
 	}
 	
-	void drawRect(Rect rect, float rot)
+	void drawRect(Rect rect, PImage img, float rot)
 	{
 		rect = translateRect(rect);
 		pushMatrix();
 		translate(rect.x, rect.y);
 		rotate( radians(rot) );
-		rect(0, 0, rect.w, rect.h);
+		if (img != null)
+			image(img, 0, 0, rect.w, rect.h);
+		else
+			rect(0, 0, rect.w, rect.h);
 		popMatrix();
 	}
 }

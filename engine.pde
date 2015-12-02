@@ -13,6 +13,7 @@ class Engine {
 	SceneManager sceneMgr;
 	MouseManager mouseMgr;
 	KeyboardManager keyboardMgr;
+	ImageManager imageMgr;
 	
 	Engine(int width, int height)
 	{
@@ -21,6 +22,7 @@ class Engine {
 		this.sceneMgr = new SceneManager(this);
 		this.mouseMgr = new MouseManager();
 		this.keyboardMgr = new KeyboardManager();
+		this.imageMgr = new ImageManager();
 	}
 	
 	void init()
@@ -48,8 +50,8 @@ class Engine {
 		lastTime = curTime;
 		
 		// Max out the delta time at 0.5 seconds
-		if (deltaTime > 500) {
-			deltaTime = 500;
+		if (deltaTime > 200) {
+			deltaTime = 200;
 		}
 		
 		
@@ -72,6 +74,11 @@ class Engine {
 	void setScene(String sceneName)
 	{
 		this.sceneMgr.set(sceneName);
+	}
+	
+	PImage getImage(String imageName)
+	{
+		return this.imageMgr.get(imageName);
 	}
 	
 	void onKeyDown(int key)
