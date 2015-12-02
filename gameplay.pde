@@ -13,6 +13,7 @@ class Gameplay extends Scene {
 	ArrayList<Walker> walkers;
 	ArrayList<Car> cars;
 	TownSpawner townSpawner;
+	Background bgMountains;
 	
 	Gameplay()
 	{
@@ -46,6 +47,13 @@ class Gameplay extends Scene {
 		this.townSpawner.engine = this.engine;
 		this.townSpawner.scene = this;
 		this.townSpawner.init();
+		this.bgMountains = new Background(
+			new Rect(0, 0, this.ortho.h * 2.5, this.ortho.h), 
+			this.engine.imageMgr.get("mountain 2"), 0.5
+		);
+		this.bgMountains.engine = this.engine;
+		this.bgMountains.scene = this;
+		this.bgMountains.init();
 	}
 	
 	void deinit()
@@ -85,6 +93,7 @@ class Gameplay extends Scene {
 		drawColor(50, 50, 50);
 		drawRect(-1000, 0, 10000, 1);
 		
+		this.bgMountains.draw();
 		this.trees.draw();
 		for (Walker walker : this.walkers)
 			walker.draw();
