@@ -19,6 +19,8 @@ class MainMenu extends Scene {
 	
 	void init()
 	{
+		this.engine.setScene("gameplay"); // TEMPORARY TO SKIP MAIN MENU
+		
 		ImageManager imageMgr = this.engine.imageMgr;
 		this.background = imageMgr.get("main menu bg");
 		this.hover      = imageMgr.get("main menu button hover");

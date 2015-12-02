@@ -12,6 +12,7 @@ class Gameplay extends Scene {
 	SceneryTrees trees;
 	ArrayList<Walker> walkers;
 	ArrayList<Car> cars;
+	TownSpawner townSpawner;
 	
 	Gameplay()
 	{
@@ -26,7 +27,7 @@ class Gameplay extends Scene {
 		this.ortho.w = (float)this.engine.wWidth / 75.0;
 		this.ortho.h = (float)this.engine.wHeight / 75.0;
 		this.collisionMgr = new CollisionManager();
-		this.collisionMgr.add(new CollisionEntity(new Rect(-100, 0, 200, 1), "floor"));
+		this.collisionMgr.add(new CollisionEntity(new Rect(-1000, 0, 10000, 1), "floor"));
 		this.trees = new SceneryTrees();
 		this.trees.engine = this.engine;
 		this.trees.scene = this;
@@ -40,25 +41,16 @@ class Gameplay extends Scene {
 		this.playerCam.scene = this;
 		this.playerCam.init();
 		this.walkers = new ArrayList<Walker>();
-		for (int i = 0; i < 100; i++) {
-			Walker walker = new Walker(random(-20, 60));
-			walker.engine = this.engine;
-			walker.scene = this;
-			walker.init();
-			this.walkers.add(walker);
-		}
 		this.cars = new ArrayList<Car>();
-		//for (int i = 0; i < 1; i++) {
-			Car car = new Car(100);
-			car.engine = this.engine;
-			car.scene = this;
-			car.init();
-			this.cars.add(car);
-		//}
+		this.townSpawner = new TownSpawner();
+		this.townSpawner.engine = this.engine;
+		this.townSpawner.scene = this;
+		this.townSpawner.init();
 	}
 	
 	void deinit()
 	{
+		this.townSpawner.deinit();
 		for (Car car : this.cars)
 			car.deinit();
 		for (Walker walker : this.walkers)
@@ -82,6 +74,7 @@ class Gameplay extends Scene {
 		}
 		for (Car car : this.cars)
 			car.tick(dt);
+		this.townSpawner.tick(dt);
 	}
 	
 	void draw()
@@ -199,5 +192,26 @@ class Gameplay extends Scene {
 		else
 			rect(0, 0, rect.w, rect.h);
 		popMatrix();
+	}
+	
+	
+	Walker spawnWalker(float x)
+	{
+		Walker walker = new Walker(x);
+		walker.engine = this.engine;
+		walker.scene = this;
+		walker.init();
+		this.walkers.add(walker);
+		return walker;
+	}
+	
+	Car spawnCar(float x)
+	{
+		Car car = new Car(x);
+		car.engine = this.engine;
+		car.scene = this;
+		car.init();
+		this.cars.add(car);
+		return car;
 	}
 }
