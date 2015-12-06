@@ -9,8 +9,8 @@ class TransitionTownToGraveyard extends SceneEntity {
 	boolean isDone;
 	float transitionTime;
 	float accumTime;
-	color startEnvTint;
-	color endEnvTint;
+	color[] startEnvTints;
+	color[] endEnvTints;
 	
 	TransitionTownToGraveyard()
 	{
@@ -22,7 +22,12 @@ class TransitionTownToGraveyard extends SceneEntity {
 		this.isDone = false;
 		this.transitionTime = 4.0;
 		this.accumTime = 0.0;
-		this.endEnvTint = color(91, 66, 166);
+		this.startEnvTints = new color[3];
+		this.endEnvTints = new color[3];
+		
+		this.endEnvTints[0] = color(81, 56, 146);
+		this.endEnvTints[1] = color(104, 76, 186);
+		this.endEnvTints[2] = color(116, 86, 206);
 	}
 	
 	void tick(float dt)
@@ -32,16 +37,20 @@ class TransitionTownToGraveyard extends SceneEntity {
 		if (this.isDone)
 			return;
 		
+		Gameplay gp = (Gameplay)this.scene;
+		
 		this.accumTime += dt;
 		if (this.accumTime > this.transitionTime)
 			this.accumTime = this.transitionTime;
 		
 		float t = this.accumTime / this.transitionTime;
-		((Gameplay)this.scene).envTint = lerpColor(
-			this.startEnvTint,
-			this.endEnvTint,
-			t
-		);
+		for (int i = 0; i < 3; i++) {
+			gp.envTints[i] = lerpColor(
+				this.startEnvTints[i],
+				this.endEnvTints[i],
+				t
+			);
+		}
 		
 		if (this.accumTime >= this.transitionTime)
 			this.isDone = true;
@@ -49,8 +58,10 @@ class TransitionTownToGraveyard extends SceneEntity {
 	
 	void start()
 	{
+		Gameplay gp = (Gameplay)this.scene;
 		this.hasStarted = true;
-		this.startEnvTint = ((Gameplay)this.scene).envTint;
+		for (int i = 0; i < gp.envTints.length; i++)
+			this.startEnvTints[i] = gp.envTints[i];
 		this.accumTime = 0.0;
 	}
 	

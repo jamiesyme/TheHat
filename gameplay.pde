@@ -13,8 +13,9 @@ class Gameplay extends Scene {
 	ArrayList<Car> cars;
 	TownSpawner townSpawner;
 	ArrayList<Background> backgrounds;
-	color envTint;
+	color[] envTints;
 	TransitionTownToGraveyard transition;
+	ToBeContinued ending;
 	
 	Gameplay()
 	{
@@ -37,33 +38,37 @@ class Gameplay extends Scene {
 		this.townSpawner  = new TownSpawner();
 		this.backgrounds  = new ArrayList<Background>();
 		this.transition   = new TransitionTownToGraveyard();
-		this.envTint = color(255, 255, 255);
+		this.ending       = new ToBeContinued();
+		this.envTints     = new color[3];
 		
+		for (int i = 0; i < this.envTints.length; i++) {
+			this.envTints[i] = color(255, 255, 255);
+		}
 		this.collisionMgr.add(new CollisionEntity(new Rect(-1000, 0, 10000, 1), "floor"));
 		initSceneEntity(this.player);
-		this.player.rect.x  = 100;
 		initSceneEntity(this.playerCam);
 		initSceneEntity(this.townSpawner);
 		initSceneEntity(this.transition);
+		initSceneEntity(this.ending);
 		addBackground(
 			new Rect(0, 0, this.ortho.h * 2.5, this.ortho.h), 
 			this.engine.imageMgr.get("mountain 2"), 
-			0.0, 0.1
+			0.0, 0.1, 0
 		);
 		addBackground(
 			new Rect(4, 0.8, 1.5, 4),
 			this.engine.imageMgr.get("tree town 2"),
-			5.0, 0.8
+			5.0, 0.8, 1
 		);
 		addBackground(
 			new Rect(0, 0.9, 2, 2),
 			this.engine.imageMgr.get("fence 1"),
-			0.0, 0.85
+			0.0, 0.85, 1
 		);
 		addBackground(
 			new Rect(0, 0, 6.3, 1.0), 
 			this.engine.imageMgr.get("ground 1"), 
-			0.0, 1.0
+			0.0, 1.0, 1
 		);
 	}
 	
@@ -88,6 +93,7 @@ class Gameplay extends Scene {
 			walker.tick(dt);
 		for (int i = 0; i < this.walkers.size(); i++) {
 			if (!this.walkers.get(i).isActive) {
+				this.walkers.get(i).deinit();
 				this.walkers.remove(i--);
 			}
 		}
@@ -95,6 +101,7 @@ class Gameplay extends Scene {
 			car.tick(dt);
 		for (int i = 0; i < this.cars.size(); i++) {
 			if (!this.cars.get(i).isActive) {
+				this.cars.get(i).deinit();
 				this.cars.remove(i--);
 			}
 		}
@@ -105,11 +112,16 @@ class Gameplay extends Scene {
 			if (this.ortho.x >= this.townSpawner.getMaxX())
 				this.transition.start();
 		}
+		
+		this.ending.tick(dt);
+		if (this.transition.isDone && !this.ending.hasStarted) {
+			this.ending.start();
+		}
 	}
 	
 	void draw()
 	{
-		background(this.envTint);
+		background(this.envTints[2]);
 		noStroke();
 		
 		drawColor(50, 50, 50);
@@ -122,6 +134,7 @@ class Gameplay extends Scene {
 		for (Car car : this.cars)
 			car.draw();
 		this.player.draw();
+		this.ending.draw();
 	}
 	
 	void drawColor(int r, int g, int b)
@@ -250,9 +263,9 @@ class Gameplay extends Scene {
 		return car;
 	}
 	
-	void addBackground(Rect r, PImage t, float spacing, float scale)
+	void addBackground(Rect r, PImage t, float spacing, float scale, int tint)
 	{
-		Background bg = new Background(r, t, spacing, scale);
+		Background bg = new Background(r, t, spacing, scale, tint);
 		initSceneEntity(bg);
 		this.backgrounds.add(bg);
 	}

@@ -28,6 +28,8 @@ class MainMenu extends Scene {
 		this.play       = imageMgr.get("main menu play");
 		this.exit       = imageMgr.get("main menu exit");
 		this.title      = imageMgr.get("main menu title");
+		
+		tint(255, 255, 255);
 	}
 	
 	void tick(float dt)

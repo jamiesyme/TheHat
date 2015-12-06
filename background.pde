@@ -9,13 +9,15 @@ class Background extends SceneEntity {
 	PImage texture;
 	float spacing;
 	float scale;
+	int tint;
 	
-	Background(Rect rect, PImage texture, float spacing, float scale)
+	Background(Rect rect, PImage texture, float spacing, float scale, int tint)
 	{
 		this.rect = rect;
 		this.texture = texture;
 		this.spacing = spacing;
 		this.scale = scale;
+		this.tint = tint;
 	}
 	
 	void draw()
@@ -29,7 +31,7 @@ class Background extends SceneEntity {
 			
 			float x = gp.ortho.x * (1 - this.scale) + float(i) * w;
 			
-			gp.drawTint(gp.envTint);
+			gp.drawTint(gp.envTints[this.tint]);
 			gp.drawRect(
 				new Rect(
 					x,

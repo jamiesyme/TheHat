@@ -255,7 +255,8 @@ class Player extends SceneEntity {
 	void draw()
 	{
 		Gameplay gp = (Gameplay)this.scene;
-		gp.drawTint(255, 255, 255);
+		//gp.drawTint(255, 255, 255);
+		gp.drawTint(gp.envTints[2]);
 		gp.drawRect(this.rect, this.texture, 0.0);
 	}
 	
