@@ -122,9 +122,9 @@ class TownSpawner extends SceneEntity {
 		
 		e.triggerLoc += 20;
 		e.spawnLoc = e.triggerLoc + screenWidth;
-		e.spawnRange = 500;
-		e.walkers = 50;
-		e.cars = 30;
+		e.spawnRange = 100;
+		e.walkers = 0;
+		e.cars = 15;
 		this.entries.add(e.clone());
 		
 	}
@@ -147,6 +147,12 @@ class TownSpawner extends SceneEntity {
 			}
 		}
 		
+	}
+	
+	float getMaxX()
+	{
+		TownSpawner_Entry e = this.entries.get(this.entries.size() - 1);
+		return e.spawnLoc;
 	}
 	
 }

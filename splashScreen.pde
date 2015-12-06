@@ -27,8 +27,10 @@ class SplashScreen extends Scene {
 		
 		add("car 1", "car1.png");
 		add("car 2", "car2.png");
-		
 		add("mountain 2", "mountain2.png");
+		add("ground 1", "ground1.png");
+		add("tree town 2", "treetown2.png");
+		add("fence 1", "fence1.png");
 		
 		this.engine.setScene("main menu");
 	}

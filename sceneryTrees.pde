@@ -10,7 +10,7 @@ class SceneryTrees extends SceneEntity {
 	
 	void init()
 	{
-		this.spacing = 4;	
+		this.spacing = 5;	
 	}
 	
 	void draw()
@@ -24,11 +24,13 @@ class SceneryTrees extends SceneEntity {
 			Rect r = new Rect();
 			r.x = (float)(i * this.spacing);
 			r.y = 1.0;
-			r.w = 1.0;
+			r.w = 1.5;
 			r.h = 4.0;
 			
-			gp.drawColor(230, 230, 230);
-			gp.drawRect(r);
+			gp.drawTint(255, 255, 255);
+			gp.drawRect(r, this.engine.imageMgr.get("tree town 2"), 0.0);
+			//gp.drawColor(230, 230, 230);
+			//gp.drawRect(r);
 		}
 	}	
 }

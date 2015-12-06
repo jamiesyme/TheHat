@@ -13,6 +13,7 @@ class Car extends SceneEntity {
 	CollisionEntity backBody;
 	PImage texture;
 	float vx;
+	boolean isActive;
 	
 	Car(float x)
 	{
@@ -24,7 +25,7 @@ class Car extends SceneEntity {
 	
 	void init()
 	{
-		this.frontRect.y = 1.0;
+		this.frontRect.y = 0.75;
 		this.frontRect.w = 1.8;
 		this.frontRect.h = 1.05;
 		this.midRect.x = this.frontRect.x + this.frontRect.w;
@@ -35,11 +36,12 @@ class Car extends SceneEntity {
 		this.backRect.y = this.midRect.y;
 		this.backRect.w = 1.3;
 		this.backRect.h = 1.05;
-		this.vx = -20.0;
+		this.vx = -12.0;
 		if (random(2) < 1)
 			this.texture = this.engine.imageMgr.get("car 1");
 		else
 			this.texture = this.engine.imageMgr.get("car 2");
+		this.isActive = true;
 		
 		this.frontBody = new CollisionEntity(this.frontRect, "car",   this);
 		this.midBody   = new CollisionEntity(this.midRect,   "floor", this);
@@ -73,6 +75,11 @@ class Car extends SceneEntity {
 			
 			((Walker)walker.data).killUp( -this.vx );
 			
+		}
+		
+		// Despawn the car
+		if (this.backRect.x + this.backRect.w < gp.ortho.x) {
+			this.isActive = false;
 		}
 	}
 	

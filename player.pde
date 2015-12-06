@@ -44,7 +44,7 @@ class Player extends SceneEntity {
 		this.walkerPressure = 0.0;
 		this.walkerRelief = 0.1;
 		this.walkerDampVx = 0.1;
-		this.carHitVx = -15.0;
+		this.carHitVx = -10.0;
 		this.carHitVy = 10.0;
 		this.isGrounded = false;
 	}
@@ -181,14 +181,15 @@ class Player extends SceneEntity {
 		
 		
 		// Check if we just ran into a walker
-		if (abs(this.vx) >= this.minPushVx) {
+		
+		float pushDist = this.vx * dt;
+		
+		CollisionEntity[] walkers = gp.collisionMgr.findCollisions(this.rect, "walker");
+		
+		for (CollisionEntity walker : walkers) {
 			
-			float pushDist = this.vx * dt;
+			if (abs(this.vx) >= this.minPushVx) {
 			
-			CollisionEntity[] walkers = gp.collisionMgr.findCollisions(this.rect, "walker");
-			
-			for (CollisionEntity walker : walkers) {
-				
 				// Make sure we're moving towards the walker
 				if (this.vx > 0.0 && (this.rect.x - walker.rect.x) > 0.0)
 					continue;
@@ -213,11 +214,29 @@ class Player extends SceneEntity {
 						
 					}
 					
+				}
+				
+			} else {
+				
+				// Let the walker push the player
+				
+				float[] norm = gp.collisionMgr.getCollisionNormal(this.rect, walker.rect);
+				
+				if (norm[0] != 0) {
 					
+					Walker w = (Walker)walker.data;
+					
+					if (w.vx > 0.0 && norm[0] > 0.0 ||
+					    w.vx < 0.0 && norm[0] < 0.0) {
+						
+						this.rect.x += ((Walker)walker.data).vx * dt;
+						
+					}
 					
 				}
 				
 			}
+			
 		}
 		
 		

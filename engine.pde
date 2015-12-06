@@ -49,7 +49,7 @@ class Engine {
 		int deltaTime = curTime - lastTime;
 		lastTime = curTime;
 		
-		// Max out the delta time at 0.5 seconds
+		// Max out the delta time at 0.2 seconds
 		if (deltaTime > 200) {
 			deltaTime = 200;
 		}

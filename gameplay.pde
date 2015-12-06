@@ -9,11 +9,12 @@ class Gameplay extends Scene {
 	CollisionManager collisionMgr;
 	Player player;
 	PlayerCamera playerCam;
-	SceneryTrees trees;
 	ArrayList<Walker> walkers;
 	ArrayList<Car> cars;
 	TownSpawner townSpawner;
-	Background bgMountains;
+	ArrayList<Background> backgrounds;
+	color envTint;
+	TransitionTownToGraveyard transition;
 	
 	Gameplay()
 	{
@@ -22,42 +23,54 @@ class Gameplay extends Scene {
 	
 	void init()
 	{
-		this.ortho = new Rect();
-		this.ortho.x = 0.0;
-		this.ortho.y = 0.0;
-		this.ortho.w = (float)this.engine.wWidth / 75.0;
-		this.ortho.h = (float)this.engine.wHeight / 75.0;
-		this.collisionMgr = new CollisionManager();
-		this.collisionMgr.add(new CollisionEntity(new Rect(-1000, 0, 10000, 1), "floor"));
-		this.trees = new SceneryTrees();
-		this.trees.engine = this.engine;
-		this.trees.scene = this;
-		this.trees.init();
-		this.player = new Player();
-		this.player.engine = this.engine;
-		this.player.scene = this;
-		this.player.init();
-		this.playerCam = new PlayerCamera(this.player);
-		this.playerCam.engine = this.engine;
-		this.playerCam.scene = this;
-		this.playerCam.init();
-		this.walkers = new ArrayList<Walker>();
-		this.cars = new ArrayList<Car>();
-		this.townSpawner = new TownSpawner();
-		this.townSpawner.engine = this.engine;
-		this.townSpawner.scene = this;
-		this.townSpawner.init();
-		this.bgMountains = new Background(
-			new Rect(0, 0, this.ortho.h * 2.5, this.ortho.h), 
-			this.engine.imageMgr.get("mountain 2"), 0.5
+		this.ortho = new Rect(
+			0.0, 
+			0.0,
+			(float)this.engine.wWidth / 75.0,
+			(float)this.engine.wHeight / 75.0
 		);
-		this.bgMountains.engine = this.engine;
-		this.bgMountains.scene = this;
-		this.bgMountains.init();
+		this.collisionMgr = new CollisionManager();
+		this.player       = new Player();
+		this.playerCam    = new PlayerCamera(this.player);
+		this.walkers      = new ArrayList<Walker>();
+		this.cars         = new ArrayList<Car>();
+		this.townSpawner  = new TownSpawner();
+		this.backgrounds  = new ArrayList<Background>();
+		this.transition   = new TransitionTownToGraveyard();
+		this.envTint = color(255, 255, 255);
+		
+		this.collisionMgr.add(new CollisionEntity(new Rect(-1000, 0, 10000, 1), "floor"));
+		initSceneEntity(this.player);
+		this.player.rect.x  = 100;
+		initSceneEntity(this.playerCam);
+		initSceneEntity(this.townSpawner);
+		initSceneEntity(this.transition);
+		addBackground(
+			new Rect(0, 0, this.ortho.h * 2.5, this.ortho.h), 
+			this.engine.imageMgr.get("mountain 2"), 
+			0.0, 0.1
+		);
+		addBackground(
+			new Rect(4, 0.8, 1.5, 4),
+			this.engine.imageMgr.get("tree town 2"),
+			5.0, 0.8
+		);
+		addBackground(
+			new Rect(0, 0.9, 2, 2),
+			this.engine.imageMgr.get("fence 1"),
+			0.0, 0.85
+		);
+		addBackground(
+			new Rect(0, 0, 6.3, 1.0), 
+			this.engine.imageMgr.get("ground 1"), 
+			0.0, 1.0
+		);
 	}
 	
 	void deinit()
 	{
+		for (Background bg : this.backgrounds)
+			bg.deinit();
 		this.townSpawner.deinit();
 		for (Car car : this.cars)
 			car.deinit();
@@ -65,12 +78,10 @@ class Gameplay extends Scene {
 			walker.deinit();
 		this.playerCam.deinit();
 		this.player.deinit();
-		this.trees.deinit();
 	}
 	
 	void tick(float dt)
 	{
-		this.trees.tick(dt);
 		this.player.tick(dt);
 		this.playerCam.tick(dt);
 		for (Walker walker : this.walkers)
@@ -82,19 +93,30 @@ class Gameplay extends Scene {
 		}
 		for (Car car : this.cars)
 			car.tick(dt);
+		for (int i = 0; i < this.cars.size(); i++) {
+			if (!this.cars.get(i).isActive) {
+				this.cars.remove(i--);
+			}
+		}
 		this.townSpawner.tick(dt);
+		
+		this.transition.tick(dt);
+		if (!this.transition.hasStarted) {
+			if (this.ortho.x >= this.townSpawner.getMaxX())
+				this.transition.start();
+		}
 	}
 	
 	void draw()
 	{
-		background(255);
+		background(this.envTint);
 		noStroke();
 		
 		drawColor(50, 50, 50);
 		drawRect(-1000, 0, 10000, 1);
 		
-		this.bgMountains.draw();
-		this.trees.draw();
+		for (Background bg : this.backgrounds)
+			bg.draw();
 		for (Walker walker : this.walkers)
 			walker.draw();
 		for (Car car : this.cars)
@@ -204,12 +226,18 @@ class Gameplay extends Scene {
 	}
 	
 	
+	void initSceneEntity(SceneEntity se)
+	{
+		se.engine = this.engine;
+		se.scene = this;
+		se.init();
+	}
+	
+	
 	Walker spawnWalker(float x)
 	{
 		Walker walker = new Walker(x);
-		walker.engine = this.engine;
-		walker.scene = this;
-		walker.init();
+		initSceneEntity(walker);
 		this.walkers.add(walker);
 		return walker;
 	}
@@ -217,10 +245,15 @@ class Gameplay extends Scene {
 	Car spawnCar(float x)
 	{
 		Car car = new Car(x);
-		car.engine = this.engine;
-		car.scene = this;
-		car.init();
+		initSceneEntity(car);
 		this.cars.add(car);
 		return car;
+	}
+	
+	void addBackground(Rect r, PImage t, float spacing, float scale)
+	{
+		Background bg = new Background(r, t, spacing, scale);
+		initSceneEntity(bg);
+		this.backgrounds.add(bg);
 	}
 }

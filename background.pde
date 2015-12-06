@@ -7,26 +7,29 @@ class Background extends SceneEntity {
 	
 	Rect rect;
 	PImage texture;
+	float spacing;
 	float scale;
 	
-	Background(Rect rect, PImage texture, float scale)
+	Background(Rect rect, PImage texture, float spacing, float scale)
 	{
 		this.rect = rect;
 		this.texture = texture;
+		this.spacing = spacing;
 		this.scale = scale;
 	}
 	
 	void draw()
 	{
 		Gameplay gp = (Gameplay)this.scene;
-		int x1 = int( floor((gp.ortho.x) * this.scale / this.rect.w) );
-		int x2 = int( ceil((gp.ortho.x + gp.ortho.w) * this.scale / this.rect.w) );
+		float w = this.rect.w + this.spacing;
+		float x1 = gp.ortho.x * this.scale / w;
+		float x2 = x1 + gp.ortho.w / w;
 		
-		for (int i = x1; i <= x2; i++) {
+		for (int i = int(floor(x1)); i <= int(floor(x2)); i++) {
 			
-			float x = gp.ortho.x * this.scale + float(i) * this.rect.w;
+			float x = gp.ortho.x * (1 - this.scale) + float(i) * w;
 			
-			gp.drawTint(255, 255, 255);
+			gp.drawTint(gp.envTint);
 			gp.drawRect(
 				new Rect(
 					x,
